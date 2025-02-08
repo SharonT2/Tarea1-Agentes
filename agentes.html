@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estados Progresivos</title>
+    <script type="text/javascript" src="https://unpkg.com/vis-network@9.0.4/dist/vis-network.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+        }
+        #mynetwork {
+            width: 600px;
+            height: 400px;
+            margin: auto;
+            border: 1px solid black;
+        }
+        .estado {
+            font-size: 2em;
+            margin: 20px;
+        }
+        button {
+            padding: 10px;
+            font-size: 1em;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Progreso de Estados</h1>
+    <div class="estado" id="estado">Estado: 1</div>
+    <div id="mynetwork"></div>
+    <button onclick="reiniciar()">Reiniciar</button>
+    
+    <script>
+        let estadoActual = 1;
+        let intervalo;
+        let nodes = new vis.DataSet([]);
+        let edges = new vis.DataSet([]);
+        
+        const container = document.getElementById("mynetwork");
+        const data = { nodes: nodes, edges: edges };
+        const options = { layout: { hierarchical: { direction: "UD" } } };
+        const network = new vis.Network(container, data, options);
+        
+        function avanzarEstado() {
+            if (estadoActual < 8) {
+                estadoActual++;
+                document.getElementById("estado").textContent = "Estado: " + estadoActual;
+                nodes.add({ id: estadoActual, label: "Estado " + estadoActual });
+                edges.add({ from: estadoActual - 1, to: estadoActual });
+            } else {
+                clearInterval(intervalo); // Detener la actualización
+            }
+        }
+        
+        function iniciar() {
+            nodes.clear();
+            edges.clear();
+            estadoActual = 1;
+            nodes.add({ id: 1, label: "Estado 1" });
+            intervalo = setInterval(avanzarEstado, 1000);
+        }
+        
+        function reiniciar() {
+            clearInterval(intervalo);
+            iniciar();
+        }
+        
+        iniciar();
+    </script>
+</body>
+</html>
